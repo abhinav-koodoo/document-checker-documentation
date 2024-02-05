@@ -82,12 +82,6 @@ The API base URL is: `https://api.koodoo.io/documents/v1.0.0/`. All methods use 
 
 This method ingests a set of documents. The type of data will be intuited from the magic bytes in the file if "file_type" is not passed.
 
-> If the request succeeds, we immediately respond with a submission reference (i.e. submission_id).
->
-> A submission is a collection of documents. Along with this submission_id, we respond with an array of document ids (uuids) pertaining to the documents that were successfully received.
->
-> You may use submission_id to immediately query our [results method](#result).
-
 
 ##### <a name="ingest_rf"></a>Request fields:
 
@@ -118,13 +112,80 @@ Example request:
 }
 ```
 
-Example response:
+##### Responses:
+
+###### Success Response (200 OK)
+
+If the request succeeds, we immediately respond with a submission reference (i.e. submission_id).
+
+A submission is a collection of documents. Along with this submission_id, we respond with an array of document ids (uuids) pertaining to the documents that were successfully received.
+
+You may use submission_id to immediately query our [results method](#result).
 
 ```json
 {
   "ok": true,
   "submission_id": "153f047f8c277954a5d2179ae3fe5959",
   "documents": ["c064e4cd8cd7bc11d6861c2fb9fa1875", "5849a89e383f05a7cd62fa76db548816"]
+}
+```
+
+###### Bad Request (400 Bad Request)
+
+This response is returned when the request is malformed, missing required fields, or has invalid data.
+
+```json
+{
+  "ok": false,
+  "error": "Bad Request",
+  "message": "Missing required field: file_content"
+}
+```
+
+###### Unsupported File Format (415 Unsupported Media Type)
+
+If a file is uploaded in a format that is not supported by the API, we return this.
+
+```json
+{
+  "ok": false,
+  "error": "Unsupported Media Type",
+  "message": "File format not supported"
+}
+```
+
+###### File Size Limit Exceeded (413 Payload Too Large)
+
+If the uploaded files exceed a certain size limit, we return this.
+
+```json
+{
+  "ok": false,
+  "error": "Payload Too Large",
+  "message": "File size exceeds the permissible limit"
+}
+```
+
+###### Internal Server Error (500 Internal Server Error)
+
+This is a generic error response for any unexpected server-side hiccups.
+
+```json
+{
+  "ok": false,
+  "error": "Internal Server Error",
+  "message": "An unexpected error occurred"
+}
+```
+
+###### Unauthorized Access (401 Unauthorized)
+
+This response is applicable if the request lacks valid authentication credentials (i.e. malformed or missing Authorization token passed in the header).
+
+```json
+{
+  "ok": false,
+  "error": "Unauthorized"
 }
 ```
 
