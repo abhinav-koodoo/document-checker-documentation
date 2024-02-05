@@ -2,7 +2,7 @@
 
 This document outlines Koodoo's Document Checker REST APIs and helps you integrate them seamlessly into your applications!
 
-**Version**: 1.0.0
+**Version**: 1.1.0
 **Updated on**: 17/01/2024
 
 ## System Design
@@ -68,7 +68,7 @@ All methods in this document require bearer authentication using the `Authorizat
 
 | Field name    | Type   | Description                                                    |
 |---------------|--------|----------------------------------------------------------------|
-| Authorization | String | Bearer token is used as “Bearer: <API key>” for authorization. |
+| Authorization | String | Bearer token is used as `Bearer: <API key>` for authorization. |
 
 ## API Base URL
 
@@ -80,11 +80,11 @@ The API base URL is: `https://api.koodoo.io/documents/v1.0.0/`. All methods use 
 
 **Content type**: multipart/form-data
 
-This method ingests a set of documents. The type of data will be intuited from the magic bytes in the document if "document_type" is not passed.
+This method ingests a set of documents. The type of data will be intuited from the magic bytes in the file if "file_type" is not passed.
 
 > If the request succeeds, we immediately respond with a submission reference (i.e. submission_id).
 >
-> A submission is a collection of documents. Along with this submission_id, we respond with an array of document_ids (uuids) pertaining to the documents that were successfully received.
+> A submission is a collection of documents. Along with this submission_id, we respond with an array of document ids (uuids) pertaining to the documents that were successfully received.
 >
 > You may use submission_id to immediately query our [results method](#result).
 
@@ -94,9 +94,9 @@ This method ingests a set of documents. The type of data will be intuited from t
 | Field name    | Type   | Description                                                                                                                                              |
 |---------------|--------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
 | documents     | Array  | **REQUIRED** Array of document objects. Even a single document object may be passed. The next 3 fields represent each document object.                        |
-| document_uuid | String | **REQUIRED** Client side document reference name. We will return this in the response.                                                                       |
+| file_uuid | String | **REQUIRED** Client side document reference name. We will return this in the response.                                                                       |
 | file_content  | String | **REQUIRED** Base64 encoding of file content                                                                                                                 |
-| document_type | Enum   | File format of the document being sent. Currently supports one of ["pdf", "jpg", "png", "jpeg"]. If no document_type is sent, we will infer from magic bytes. |
+| file_type | Enum   | File format of the document being sent. Currently supports one of ["pdf", "jpg", "png", "jpeg"]. If no document_type is sent, we will infer from magic bytes. |
 
 
 Example request:
@@ -105,14 +105,14 @@ Example request:
 {
   "documents": [
     {
-      "document_uuid": "c064e4cd8cd7bc11d6861c2fb9fa1875",
-      "document_content": "<<file contents>>",
-      "document_type": "pdf"
+      "file_uuid": "c064e4cd8cd7bc11d6861c2fb9fa1875",
+      "file_content": "<<file contents>>",
+      "file_type": "pdf"
     },
     {
-      "document_uuid": "5849a89e383f05a7cd62fa76db548816",
-      "document_content": "<<file contents>>",
-      "document_type": "pdf"
+      "file_uuid": "5849a89e383f05a7cd62fa76db548816",
+      "file_content": "<<file contents>>",
+      "file_type": "pdf"
     }
   ]
 }
@@ -152,9 +152,9 @@ PATCH /submissions/153f047f8c277954a5d2179ae3fe5959/documents
 {
   "documents": [
     {
-      "document_uuid": "25240ad8324e9dfb0cec29c629d3dbe2",
-      "document_content": "<<file contents>>",
-      "document_type": "pdf"
+      "file_uuid": "25240ad8324e9dfb0cec29c629d3dbe2",
+      "file_content": "<<file contents>>",
+      "file_type": "pdf"
     }
   ]
 }
@@ -179,7 +179,7 @@ This method allows consumers to delete documents from a submission.
 | Field name    | Type   | Description                     |
 |---------------|--------|---------------------------------|
 | submission_id | String | **REQUIRED** Submission identifier. |
-| document_id   | String | **REQUIRED** Document identifier.   |
+| file_id   | String | **REQUIRED** Document identifier.   |
 
 Example request to delete documents from submission:
 
